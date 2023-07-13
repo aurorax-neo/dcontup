@@ -1,8 +1,8 @@
 import confutilPPP
 import logPPP
 
-from src.main.dcontup import CONFIG
-from src.main.dcontup import dcontup
+from dcontup import CONFIG
+from dcontup import dcontup
 
 
 # 1. 检查镜像版本
