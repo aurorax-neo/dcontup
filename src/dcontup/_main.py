@@ -48,14 +48,23 @@ class dcontup:
 
     # 获取镜像的最新tag
     def get_latest_image_tag_by_image_name(self):
-        url = f"https://hub.docker.com/v2/repositories/{self.image_name}/tags"
+        url = f"https://hub.docker.com/v2/repositories/{self.image_name}/tags?page=1&page_size=1"
         response = requests.get(url)
         if response.status_code == 200:
-            res = response.json()
-            latest_images = [item for item in res['results'] if item['name'] == 'latest'][0]
-            latest_images = [item for item in res['results'] if item['digest'] == latest_images['digest']]
-            latest_tag = [item for item in latest_images if item['name'] != 'latest'][0]
-            return latest_tag['name'].strip()
+            page_size = response.json().get('count')
+            url = f"https://hub.docker.com/v2/repositories/{self.image_name}/tags?page=1&page_size={page_size}"
+            response = requests.get(url)
+            if response.status_code == 200:
+                res = response.json()
+                latest_image = [item for item in res.get('results') if item.get('name') == 'latest'][0]
+                latest_image_digest = [item for item in res.get('results') if
+                                       item.get('digest') == latest_image.get('digest')]
+                if len(latest_image_digest) > 1:
+                    latest_tag = [item for item in latest_image_digest if item.get('name') != 'latest'][0]
+                else:
+                    latest_tag = latest_image
+                return latest_tag.get('name')
+            return 'latest'
         return 'latest'
 
     # 拉取最新镜像
