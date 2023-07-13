@@ -1,6 +1,6 @@
 import requests as requests
 
-from src.sshPPP import *
+from .sshPPP import *
 
 
 class dcontup:
