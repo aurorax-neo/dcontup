@@ -1,3 +1,4 @@
+import logPPP
 import requests as requests
 
 from .sshPPP import *
@@ -21,15 +22,20 @@ class dcontup:
     # 校验所有参数
     def check(self):
         if self.ssh['host'] == '' or self.ssh['host'] is None:
-            raise Exception('ssh host is empty,please check the configuration!')
+            logPPP.error('ssh host is empty,please check the configuration!')
+            exit(1)
         if self.ssh['user'] == '' or self.ssh['user'] is None:
-            raise Exception('ssh user is empty,please check the configuration!')
+            logPPP.error('ssh user is empty,please check the configuration!')
+            exit(1)
         if self.ssh['password'] == '' or self.ssh['password'] is None:
-            raise Exception('ssh password is empty,please check the configuration!')
+            logPPP.error('ssh password is empty,please check the configuration!')
+            exit(1)
         if self.container_name == '' or self.container_name is None:
-            raise Exception('container name is empty,please check the configuration!')
+            logPPP.error('container name is empty,please check the configuration!')
+            exit(1)
         if self.image_name == '' or self.image_name is None:
-            raise Exception('image name is empty,please check the configuration!')
+            logPPP.error('image name is empty,please check the configuration!')
+            exit(1)
 
     # 获取容器使用的镜像tag
     def get_container_using_image_tag_by_container_name(self):
