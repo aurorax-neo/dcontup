@@ -1,22 +1,20 @@
 import logPPP
 import requests as requests
 
+from .config import CONFIG
 from .sshPPP import *
 
 
 class dcontup:
-    def __init__(self, container_name: str, image_name: str, docker_run_command: str, ssh=None):
+    def __init__(self, ssh=None, docker_image=None):
         if ssh is None:
-            ssh = dict({
-                'host': '',
-                'port': 22,
-                'user': '',
-                'password': ''
-            })
-        self.ssh = ssh
-        self.container_name = container_name
-        self.image_name = image_name
-        self.docker_run_command = docker_run_command
+            self.ssh = dict(CONFIG.get('SSH'))
+        else:
+            self.ssh = ssh
+        if docker_image is None:
+            self.docker_image = dict(CONFIG.get('DOCKER_IMAGE'))
+        else:
+            self.docker_image = docker_image
         self.check()
 
     # 校验所有参数
@@ -30,16 +28,16 @@ class dcontup:
         if self.ssh['password'] == '' or self.ssh['password'] is None:
             logPPP.error('ssh password is empty,please check the configuration!')
             exit(1)
-        if self.container_name == '' or self.container_name is None:
+        if self.docker_image.get('container_name') == '' or self.docker_image.get('container_name') is None:
             logPPP.error('container name is empty,please check the configuration!')
             exit(1)
-        if self.image_name == '' or self.image_name is None:
+        if self.docker_image.get('image_name') == '' or self.docker_image.get('image_name') is None:
             logPPP.error('image name is empty,please check the configuration!')
             exit(1)
 
     # 获取容器使用的镜像tag
     def get_container_using_image_tag_by_container_name(self):
-        command = f'docker inspect --format={{{{.Config.Image}}}} {self.container_name}'
+        command = f'docker inspect --format={{{{.Config.Image}}}} {self.docker_image.get("container_name")}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
@@ -48,11 +46,11 @@ class dcontup:
 
     # 获取镜像的最新tag
     def get_latest_image_tag_by_image_name(self):
-        url = f"https://hub.docker.com/v2/repositories/{self.image_name}/tags?page=1&page_size=1"
+        url = f"https://hub.docker.com/v2/repositories/{self.docker_image.get('image_name')}/tags?page=1&page_size=1"
         response = requests.get(url)
         if response.status_code == 200:
             page_size = response.json().get('count')
-            url = f"https://hub.docker.com/v2/repositories/{self.image_name}/tags?page=1&page_size={page_size}"
+            url = f"https://hub.docker.com/v2/repositories/{self.docker_image.get('image_name')}/tags?page=1&page_size={page_size}"
             response = requests.get(url)
             if response.status_code == 200:
                 res = response.json()
@@ -69,7 +67,7 @@ class dcontup:
 
     # 拉取最新镜像
     def pull_latest_image(self, image_tag):
-        command = f'docker pull {self.image_name}:{image_tag}'
+        command = f'docker pull {self.docker_image.get("image_name")}:{image_tag}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
@@ -78,7 +76,7 @@ class dcontup:
 
     # 判断容器是否存在
     def is_container_not_exist(self):
-        command = f' docker inspect {self.container_name}'
+        command = f' docker inspect {self.docker_image.get("container_name")}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
@@ -87,7 +85,7 @@ class dcontup:
 
     # 停止并删除容器
     def stop_and_remove_container(self):
-        command = f'docker stop {self.container_name} && docker rm {self.container_name}'
+        command = f'docker stop {self.docker_image.get("container_name")} && docker rm {self.docker_image.get("container_name")}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
@@ -96,7 +94,7 @@ class dcontup:
 
     # 部署新容器
     def deploy_new_container(self, image_tag):
-        command = f'{self.docker_run_command} --name={self.container_name} {self.image_name}:{image_tag}'
+        command = f'{self.docker_image.get("docker_run_command")} --name={self.docker_image.get("container_name")} {self.docker_image.get("image_name")}:{image_tag} {self.docker_image.get("container_run_command")}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
@@ -105,7 +103,7 @@ class dcontup:
 
     # 删除旧镜像
     def remove_old_image(self, image_tag):
-        command = f'docker rmi {self.image_name}:{image_tag}'
+        command = f'docker rmi {self.docker_image.get("image_name")}:{image_tag}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
