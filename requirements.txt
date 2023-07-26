@@ -1,4 +1,4 @@
 confutilPPP==1.0.4
-logPPP==1.0.4
+logPPP==1.0.5
 paramiko==3.2.0
 Requests==2.31.0
