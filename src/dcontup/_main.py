@@ -6,7 +6,7 @@ from .sshPPP import *
 
 
 class dcontup:
-    def __init__(self, ssh=None, docker_image=None):
+    def __init__(self, ssh=None, docker_image=None, proxy=None):
         if ssh is None:
             self.ssh = dict(CONFIG.get('SSH'))
         else:
@@ -15,6 +15,12 @@ class dcontup:
             self.docker_image = dict(CONFIG.get('DOCKER_IMAGE'))
         else:
             self.docker_image = docker_image
+        if proxy is None:
+            self.proxy = CONFIG.get('PROXY')
+        else:
+            self.proxy = proxy
+        self.session = requests.session()
+        self.session.proxies = self.proxy
         self.check()
 
     # 校验所有参数
@@ -46,24 +52,28 @@ class dcontup:
 
     # 获取镜像的最新tag
     def get_latest_image_tag_by_image_name(self):
-        url = f"https://hub.docker.com/v2/repositories/{self.docker_image.get('image_name')}/tags?page=1&page_size=1"
-        response = requests.get(url)
-        if response.status_code == 200:
-            page_size = response.json().get('count')
-            url = f"https://hub.docker.com/v2/repositories/{self.docker_image.get('image_name')}/tags?page=1&page_size={page_size}"
-            response = requests.get(url)
+        try:
+            url = f"https://hub.docker.com/v2/repositories/{self.docker_image.get('image_name')}/tags?page=1&page_size=1"
+            response = self.session.get(url)
             if response.status_code == 200:
-                res = response.json()
-                latest_image = [item for item in res.get('results') if item.get('name') == 'latest'][0]
-                latest_image_digest = [item for item in res.get('results') if
-                                       item.get('digest') == latest_image.get('digest')]
-                if len(latest_image_digest) > 1:
-                    latest_tag = [item for item in latest_image_digest if item.get('name') != 'latest'][0]
-                else:
-                    latest_tag = latest_image
-                return latest_tag.get('name')
+                page_size = response.json().get('count')
+                url = f"https://hub.docker.com/v2/repositories/{self.docker_image.get('image_name')}/tags?page=1&page_size={page_size}"
+                response = self.session.get(url)
+                if response.status_code == 200:
+                    res = response.json()
+                    latest_image = [item for item in res.get('results') if item.get('name') == 'latest'][0]
+                    latest_image_digest = [item for item in res.get('results') if
+                                           item.get('digest') == latest_image.get('digest')]
+                    if len(latest_image_digest) > 1:
+                        latest_tag = [item for item in latest_image_digest if item.get('name') != 'latest'][0]
+                    else:
+                        latest_tag = latest_image
+                    return latest_tag.get('name')
+                return 'latest'
             return 'latest'
-        return 'latest'
+        except Exception as e:
+            logPPP.error(e)
+            exit(1)
 
     # 拉取最新镜像
     def pull_latest_image(self, image_tag):

@@ -80,7 +80,7 @@ def remove_old_image(_pandora: dcontup, _cg: CONFIG, _image_tag: str):
 
 def main():
     cg = confutilPPP.check_config(CONFIG)
-    pd_update = dcontup(cg['SSH'], cg['DOCKER_IMAGE'])
+    pd_update = dcontup(cg['SSH'], cg['DOCKER_IMAGE'], cg['PROXY'])
     # 1. 检查镜像版本
     isLatest, container_using_image_tag, latest_image_tag = check_version_is_latest(pd_update, cg)
     # 如果容器使用的镜像不是最新版本
