@@ -1,8 +1,5 @@
 CONFIG = dict({
-    'PROXY': {
-        'http': None,
-        'https': None
-    },
+    'PROXY': None,
     'SSH': {
         'host': '',
         'user': '',

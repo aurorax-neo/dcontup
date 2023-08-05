@@ -19,7 +19,7 @@ def check_version_is_latest(_pandora: dcontup, _cg: CONFIG):
         logPPP.info(f'new version found is {_cg["DOCKER_IMAGE"]["image_name"]}:{latest_image_tag}')
         return False, container_using_image_tag, latest_image_tag
     # 没有新版本
-    logPPP.info(f'no new version found,container is using latest image!')
+    logPPP.info(f'no new version found,container is using latest(TAG:{container_using_image_tag}) image!')
     return True, container_using_image_tag, latest_image_tag
 
 

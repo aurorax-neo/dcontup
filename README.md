@@ -29,6 +29,7 @@ python src/main.py --configpath=<配置文件路径>
 ###### 配置文件模板
 
 ```
+PROXY: http://IP:端口
 SSH:
     host:   #ip地址
     user:   #用户名
@@ -38,5 +39,6 @@ DOCKER_IMAGE:
     IMAGE_NAME: 	#docker镜像名称
     CONTAINER_NAME: 	#容器名称
     DOCKER_RUN_COMMAND: docker run -itd --restart always #docker部署容器命令。镜像名称、容器名称勿填，使用上述配置中的IMAGE_NAME、CONTAINER_NAME。
+    container_run_command: '' 
 ```
 

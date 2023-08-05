@@ -16,9 +16,15 @@ class dcontup:
         else:
             self.docker_image = docker_image
         if proxy is None:
-            self.proxy = CONFIG.get('PROXY')
+            self.proxy = {
+                'http': CONFIG.get('PROXY'),
+                'https': CONFIG.get('PROXY')
+            }
         else:
-            self.proxy = proxy
+            self.proxy = {
+                'http': proxy,
+                'https': proxy
+            }
         self.session = requests.session()
         self.session.proxies = self.proxy
         self.check()
