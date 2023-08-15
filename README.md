@@ -13,7 +13,7 @@ pip install -r requirements.txt
 ### 2.执行入口文件
 
 ```cmd
-python src/main.py
+python src/run.py
 ```
 
 ## 二.配置文件
@@ -23,7 +23,7 @@ python src/main.py
 ​		可以通过“--configpath=<配置文件路径>”指定配置文件
 
 ```cmd
-python src/main.py --configpath=<配置文件路径>
+python src/run.py --configpath=<配置文件路径>
 ```
 
 ###### 配置文件模板

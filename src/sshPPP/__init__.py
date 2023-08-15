@@ -1,4 +1,4 @@
-from ._main import SSHPPP
+from .__SSHPPP__ import SSHPPP
 
 __all__ = ['SSHPPP', 'ssh_exec_command']
 

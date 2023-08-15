@@ -1,8 +1,8 @@
-import logPPP
 import requests as requests
 
-from .config import CONFIG
-from .sshPPP import *
+from src.sshPPP import *
+from src.util import *
+from .__config__ import CONFIG
 
 
 class dcontup:
@@ -32,19 +32,19 @@ class dcontup:
     # 校验所有参数
     def check(self):
         if self.ssh['host'] == '' or self.ssh['host'] is None:
-            logPPP.error('ssh host is empty,please check the configuration!')
+            logger.error('ssh host is empty,please check the configuration!')
             exit(1)
         if self.ssh['user'] == '' or self.ssh['user'] is None:
-            logPPP.error('ssh user is empty,please check the configuration!')
+            logger.error('ssh user is empty,please check the configuration!')
             exit(1)
         if self.ssh['password'] == '' or self.ssh['password'] is None:
-            logPPP.error('ssh password is empty,please check the configuration!')
+            logger.error('ssh password is empty,please check the configuration!')
             exit(1)
         if self.docker_image.get('container_name') == '' or self.docker_image.get('container_name') is None:
-            logPPP.error('container name is empty,please check the configuration!')
+            logger.error('container name is empty,please check the configuration!')
             exit(1)
         if self.docker_image.get('image_name') == '' or self.docker_image.get('image_name') is None:
-            logPPP.error('image name is empty,please check the configuration!')
+            logger.error('image name is empty,please check the configuration!')
             exit(1)
 
     # 获取容器使用的镜像tag
@@ -78,8 +78,7 @@ class dcontup:
                 return 'latest'
             return 'latest'
         except Exception as e:
-            logPPP.error(e)
-            exit(1)
+            logger.error(e)
 
     # 拉取最新镜像
     def pull_latest_image(self, image_tag):
