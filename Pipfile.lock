@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1b3a91672f8bdaff7b17145c61972bd983ea3279df5c6427419150ff4dd9bacc"
+            "sha256": "c6922c05e575052e8523fd02ec91aa26d48ff687f16e591dd4d3d3d7984d07a5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -10,7 +10,7 @@
         "sources": [
             {
                 "name": "pip_conf_index_global",
-                "url": "https://mirrors.aliyun.com/pypi/simple/",
+                "url": "https://pypi.tuna.tsinghua.edu.cn/simple/",
                 "verify_ssl": true
             }
         ]
@@ -237,6 +237,14 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==3.4"
+        },
+        "logppp": {
+            "hashes": [
+                "sha256:b5aa6ae4fb32434b9f5dc0efa707d3414f8ac0bb37af00daf71c003e267a7b06",
+                "sha256:ce21af6df858dbdf3e1957e33e8dfd7beee379e04a64e22db98201271d239965"
+            ],
+            "index": "pip_conf_index_global",
+            "version": "==1.3.0"
         },
         "paramiko": {
             "hashes": [
