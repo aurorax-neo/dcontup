@@ -9,6 +9,7 @@ name = "pip_conf_index_global"
 requests = "*"
 paramiko = "*"
 logppp = "*"
+confutilppp = "*"
 
 [dev-packages]
 
