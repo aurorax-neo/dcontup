@@ -4,7 +4,7 @@ import confutilPPP
 
 from dcontup import CONFIG
 from dcontup import dcontup
-from src.util import logger, RETRY_CALLBACK
+from dcontup.util import logger, RETRY_CALLBACK
 
 
 # 1. 检查镜像版本
