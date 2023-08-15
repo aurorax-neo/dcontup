@@ -1,8 +1,8 @@
-import logPPP
 import requests as requests
 
-from .config import CONFIG
-from .sshPPP import *
+from src.sshPPP import *
+from src.util import *
+from .__config__ import CONFIG
 
 
 class dcontup:
@@ -32,19 +32,19 @@ class dcontup:
     # 校验所有参数
     def check(self):
         if self.ssh['host'] == '' or self.ssh['host'] is None:
-            logPPP.error('ssh host is empty,please check the configuration!')
+            logger.error('ssh host is empty,please check the configuration!')
             exit(1)
         if self.ssh['user'] == '' or self.ssh['user'] is None:
-            logPPP.error('ssh user is empty,please check the configuration!')
+            logger.error('ssh user is empty,please check the configuration!')
             exit(1)
         if self.ssh['password'] == '' or self.ssh['password'] is None:
-            logPPP.error('ssh password is empty,please check the configuration!')
+            logger.error('ssh password is empty,please check the configuration!')
             exit(1)
         if self.docker_image.get('container_name') == '' or self.docker_image.get('container_name') is None:
-            logPPP.error('container name is empty,please check the configuration!')
+            logger.error('container name is empty,please check the configuration!')
             exit(1)
         if self.docker_image.get('image_name') == '' or self.docker_image.get('image_name') is None:
-            logPPP.error('image name is empty,please check the configuration!')
+            logger.error('image name is empty,please check the configuration!')
             exit(1)
 
     # 获取容器使用的镜像tag
@@ -78,26 +78,30 @@ class dcontup:
                 return 'latest'
             return 'latest'
         except Exception as e:
-            logPPP.error(e)
-            exit(1)
+            logger.error(e)
 
     # 拉取最新镜像
     def pull_latest_image(self, image_tag):
+        command = f' docker images -q {self.docker_image.get("image_name")}:{image_tag}'
+        out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
+                                    command=command)
+        if not err and out != '':
+            return True, out
         command = f'docker pull {self.docker_image.get("image_name")}:{image_tag}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
-            return True
-        return False
+            return True, out
+        return False, err
 
     # 判断容器是否存在
     def is_container_not_exist(self):
-        command = f' docker inspect {self.docker_image.get("container_name")}'
+        command = f'docker inspect {self.docker_image.get("container_name")}'
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
-            return False
-        return True
+            return False, err
+        return True, out
 
     # 停止并删除容器
     def stop_and_remove_container(self):
@@ -105,8 +109,8 @@ class dcontup:
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
-            return True
-        return False
+            return True, out
+        return False, err
 
     # 部署新容器
     def deploy_new_container(self, image_tag):
@@ -114,8 +118,8 @@ class dcontup:
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
-            return True
-        return False
+            return True, out
+        return False, err
 
     # 删除旧镜像
     def remove_old_image(self, image_tag):
@@ -123,5 +127,5 @@ class dcontup:
         out, err = ssh_exec_command(self.ssh['host'], self.ssh['user'], self.ssh['password'],
                                     command=command)
         if not err:
-            return True
-        return False
+            return True, out
+        return False, err

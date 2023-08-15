@@ -1,0 +1,16 @@
+[[source]]
+#url = "https://mirrors.aliyun.com/pypi/simple/"
+#url = "https://pypi.org/simple/"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+verify_ssl = true
+name = "pip_conf_index_global"
+
+[packages]
+requests = "*"
+paramiko = "*"
+logppp = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
