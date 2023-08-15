@@ -1,7 +1,7 @@
 import requests as requests
 
-from src.sshPPP import *
-from src.util import *
+from .sshPPP import *
+from .util import *
 from .__config__ import CONFIG
 
 
